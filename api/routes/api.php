@@ -17,15 +17,17 @@ use Illuminate\Support\Facades\Route;
 */
 Route::prefix('api')->group(function () {
     
+    Route::post('/register/oauth2', [AuthController::class, "oauth2RegisterOrLogin"])->name("oauth2RegisterOrLogin");
+
     //Group authentification          Todo :: export it in others file
     Route::name('oauth2.')->group(function () {
-        Route::post('/register/auth2', [AuthController::class, "Auth2"])->name("auth2");
-        Route::post('/phone/verify', [AuthController::class, "send_code_phone_verify"])
-                ->name("send_code_phone_verify")
+       
+        Route::post('/phone/verify', [AuthController::class, "sendCodePhoneVerification"])
+                ->name("sendCodePhoneVerification")
                 ->middleware(['auth:sanctum', 'ability:phone:verification']);
 
-        Route::post('/phone/verify/{uuid}/check', [AuthController::class, "code_phone_verify"])
-                ->name("phone_verify")
+        Route::post('/phone/verify/{uuid}/check', [AuthController::class, "VerifyCodePhoneOtp"])
+                ->name("VerifyCodePhoneOtp")
                 ->middleware(['auth:sanctum', 'ability:phone:verification']);
     });  
 

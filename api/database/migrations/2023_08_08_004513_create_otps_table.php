@@ -20,6 +20,7 @@ return new class extends Migration
             $table->dateTime("expired_at")->default(date('Y-m-d H:i:s', time() + 900));
             $table->string("reason");
             $table->boolean("verified");
+            $table->boolean("expiried")->default(false);
             $table->timestamps();
         });
     }

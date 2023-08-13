@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OAuth2Request;
+use App\Http\Requests\SendPhoneCodeRequest;
+use App\Http\Requests\VerifyCodePhoneOtpRequest;
 use App\Models\otp;
 use App\Models\User;
 use App\Service\AuthService;
@@ -12,36 +15,23 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    public function __construct (
+        private AuthService $authService
+    ){
+
+    }
      /**
      * Authenticate User
      * @param Request $request
      * @return User 
      */
-    public function Auth2(Request $request)
+    public function oauth2RegisterOrLogin(OAuth2Request $request)
     {
         try {
-            //Validated
-            $validateUser = Validator::make($request->all(), 
-            [
-                "oauth_id" =>"required",
-                "provider" => 'required|in:google,facebook',
-                "username" => "required",
-                "email" => "required|email"
-            ]);
-
-            //Validation failed
-            if($validateUser->fails()){
-                return response()->json([
-                    'status' => false,
-                    'message' => 'validation error',
-                    'errors' => $validateUser->errors()
-                ], 401);
-            }
-
             //Authentification
-            $response = AuthService::Auth2($request);
+            $response = $this->authService->Oauth2($request);
 
-            return $response;
+            return response()->json($response);
 
         } catch (\Throwable $th) {
             return response()->json([
@@ -56,28 +46,14 @@ class AuthController extends Controller
      * @param Request $request
      * @return otp 
      */
-    function send_code_phone_verify(Request $request)  {
+    public function sendCodePhoneVerification(SendPhoneCodeRequest $request)  {
 
       try {
         
-        $validation = Validator::make($request->all(), 
-        [
-            "phone_number" => 'required',
-        ]);
-
-         //Validation failed
-         if($validation->fails()){
-            return response()->json([
-                'status' => false,
-                'message' => 'validation error',
-                'errors' => $validation->errors()
-            ], 401);
-        }
-
         //Authentification
-        $response = AuthService::send_code_phone_verification($request);
+        $response = $this->authService->sendCodePhoneVerification($request);
 
-        return $response;
+        return response()->json($response);
 
       } catch (\Throwable $th) {
         return response()->json([
@@ -94,25 +70,14 @@ class AuthController extends Controller
      * @param Request $request
      * 
      */
-    function code_phone_verify(Request $request, $uuid)  {
+    public function VerifyCodePhoneOtp(VerifyCodePhoneOtpRequest $request, $uuid)  {
 
         try {
-            $validation = Validator::make($request->all(), 
-            [
-                "code" => 'required',
-            ]);
-            
-            //Validation failed
-            if($validation->fails()){
-                return response()->json([
-                    'status' => false,
-                    'message' => 'validation error',
-                    'errors' => $validation->errors()
-            ], 401);
-            }
            
-            $response = AuthService::code_otp_verification($request, $uuid);
-            return $response;
+
+            $response = $this->authService->codeOtpVerification($request, $uuid);
+
+            return response()->json($response);
         
         } catch (\Throwable $th) {
             return response()->json([
