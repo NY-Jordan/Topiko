@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ProviderEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class OAuth2Request extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +24,10 @@ class OAuth2Request extends FormRequest
     public function rules(): array
     {
         return [
-                "oauth_id" =>"required",
-                "provider" => 'required|in:google,facebook',
-                "username" => "required",
-                "email" => "required|email"
-            
+            "oauth_id" => "required",
+            "provider" => ['required', Rule::enum(ProviderEnum::class)],
+            "username" => "required",
+            "email" => "required|email"
         ];
     }
 }

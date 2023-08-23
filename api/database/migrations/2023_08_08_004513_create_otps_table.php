@@ -17,10 +17,9 @@ return new class extends Migration
             $table->string("code");
             $table->string("phone_number");
             $table->string("uuid");
-            $table->dateTime("expired_at")->default(date('Y-m-d H:i:s', time() + 900));
-            $table->string("reason");
-            $table->boolean("verified");
-            $table->boolean("expiried")->default(false);
+            $table->dateTime("expires_at")->default(now());
+            $table->string("kind");
+            $table->boolean("verified_at")->nullable();
             $table->timestamps();
         });
     }
