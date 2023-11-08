@@ -21,9 +21,9 @@ class OtpService
             'code' => $this->generateOtpCode(),
             'phone_number' => $phoneNumber ?? $user->phone_number,
             'uuid' => Uuid::uuid4(),
-            "expired_at" => now()->addMinutes(15),
+            "expires_at" => now()->addMinutes(15),
             'kind' => $kind->value,
-            'verified' => false,
+            'verified_at' => false,
         ]);
     }
     public function send(Otp $otp): Otp
@@ -55,5 +55,6 @@ class OtpService
         }
         return $result;
     }
+   
 
 }

@@ -23,13 +23,13 @@ class AuthService
         string $email,
         string $oauthId,
         ProviderEnum $provider,
-    ): NewAccessToken {
+    ): User {
         //verify if user already exist
         $user = User::findByEmail($email);
         if (!$user) {
             $user = $this->createUser($username, $email, $oauthId, $provider);
         }
-        return $user->getToken();
+        return $user;
     }
 
     protected function createUser(

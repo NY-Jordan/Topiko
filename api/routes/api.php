@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\MenuController;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\PhoneNumberVerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,23 +17,21 @@ use Illuminate\Support\Facades\Route;
 */
 Route::prefix('api')->group(function () {
     
-    Route::post('/register/oauth2', [AuthController::class, "oauth2RegisterOrLogin"])->name("oauth2RegisterOrLogin");
+    Route::post('/register/oauth2', [LoginController::class, "login"])->name("oauth2RegisterOrLogin");
 
     //Group authentification          Todo :: export it in others file
     Route::name('oauth2.')->group(function () {
        
-        Route::post('/phone/verify', [AuthController::class, "sendCodePhoneVerification"])
+        Route::post('/phone/verify', [PhoneNumberVerificationController::class, "sendVerificationCode"])
                 ->name("sendCodePhoneVerification")
-                ->middleware(['auth:sanctum', 'ability:phone:verification']);
+                ->middleware(['auth:sanctum', 'ability:limited']);
 
-        Route::post('/phone/verify/{uuid}/check', [AuthController::class, "VerifyCodePhoneOtp"])
+        Route::post('/phone/verify/{uuid}/check', [PhoneNumberVerificationController::class, "checkVerificationCode"])
                 ->name("VerifyCodePhoneOtp")
-                ->middleware(['auth:sanctum', 'ability:phone:verification']);
+                ->middleware(['auth:sanctum', 'ability:limited']);
     });  
 
-    Route::middleware(['auth:sanctum', 'abilities:phone:verification,user:all:request'])->group(function () {
-        Route::get('/menu', [MenuController::class, "get_all"]);
-    });
+  
     
 
     

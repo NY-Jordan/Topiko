@@ -36,7 +36,7 @@ class PhoneNumberVerificationController extends Controller
     public function checkVerificationCode(string $uuid, PhoneNumberVerificationRequest $request)
     {
         // retrouver l'otp
-        $otp = Otp::findNotVerifiedByUuid(
+        $otp = Otp::findNotVerifiedByUuidAndKind(
             $uuid,
             OtpKindEnum::PHONE_NUMBER_VALIDATION
         );
@@ -44,6 +44,7 @@ class PhoneNumberVerificationController extends Controller
         /** @var User */
         $user = Auth::user();
         $user->markPhoneNumberAsVerified();
+        $otp->setverified();
         return UserTokenResource::make($user);
     }
 }
